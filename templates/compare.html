@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}เปรียบเทียบผู้เล่น{% endblock %}
+{% block content %}
+{% set ranks1 = (player1.get('ranks') if player1 else {}) or {} %}
+{% set ranks2 = (player2.get('ranks') if player2 else {}) or {} %}
+{% set ratings1 = (player1.get('ratings') if player1 else {}) or {} %}
+{% set ratings2 = (player2.get('ratings') if player2 else {}) or {} %}
+<div class="compare-wrap">
+    {% if not player1 or not player2 %}
+    <div class="compare-card">
+        <h1>เปรียบเทียบผู้เล่น</h1>
+        <form method="post">
+            <label for="id1">Steam ID ผู้เล่นคนที่ 1</label>
+            <input id="id1" name="id1" value="{{ steam_id_1 or '' }}" required>
+            <label for="id2">Steam ID ผู้เล่นคนที่ 2</label>
+            <input id="id2" name="id2" value="{{ steam_id_2 or '' }}" required>
+            <button type="submit">เปรียบเทียบ</button>
+        </form>
+        {% if error %}<p class="error">{{ error }}</p>{% endif %}
+        <p><a class="back-btn" href="/">กลับหน้าแรก</a></p>
+    </div>
+    {% else %}
+    <div class="compare-card">
+        <h1>เปรียบเทียบผู้เล่น</h1>
+        <div class="vs-layout">
+            <div class="player-col">
+                <h2>{{ player1.get('name', 'N/A') }}</h2>
+                <p class="steam-id">{{ steam_id_1 or 'N/A' }}</p>
+                <div class="stat-line"><span>จำนวนแมตช์</span><strong>{{ player1.get('totalMatches', 0) }}</strong></div>
+                <div class="stat-line"><span>อัตราชนะ</span><strong>{{ '%.1f'|format(player1.get('winRate', 0) or 0) }}%</strong></div>
+                <div class="stat-line"><span>Premier</span><strong>{{ ranks1.get('premier') or 'N/A' }}</strong></div>
+                <div class="stat-line"><span>FACEIT</span><strong>{{ ranks1.get('faceit') or 'N/A' }}</strong></div>
+                {% for label, key in [('Aim', 'aim'), ('Positioning', 'positioning'), ('Utility', 'utility'), ('Clutch', 'clutch')] %}
+                {% set s1 = ratings1.get(key, 0) or 0 %}
+                {% set s2 = ratings2.get(key, 0) or 0 %}
+                <div class="stat-line">
+                    <span>{{ label }}</span>
+                    <strong class="{{ 'higher' if s1 > s2 else ('lower' if s1 < s2 else '') }}">{{ s1 }}</strong>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="vs-center">⚔️ VS</div>
+
+            <div class="player-col">
+                <h2>{{ player2.get('name', 'N/A') }}</h2>
+                <p class="steam-id">{{ steam_id_2 or 'N/A' }}</p>
+                <div class="stat-line"><span>จำนวนแมตช์</span><strong>{{ player2.get('totalMatches', 0) }}</strong></div>
+                <div class="stat-line"><span>อัตราชนะ</span><strong>{{ '%.1f'|format(player2.get('winRate', 0) or 0) }}%</strong></div>
+                <div class="stat-line"><span>Premier</span><strong>{{ ranks2.get('premier') or 'N/A' }}</strong></div>
+                <div class="stat-line"><span>FACEIT</span><strong>{{ ranks2.get('faceit') or 'N/A' }}</strong></div>
+                {% for label, key in [('Aim', 'aim'), ('Positioning', 'positioning'), ('Utility', 'utility'), ('Clutch', 'clutch')] %}
+                {% set s1 = ratings1.get(key, 0) or 0 %}
+                {% set s2 = ratings2.get(key, 0) or 0 %}
+                <div class="stat-line">
+                    <span>{{ label }}</span>
+                    <strong class="{{ 'higher' if s2 > s1 else ('lower' if s2 < s1 else '') }}">{{ s2 }}</strong>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <a class="back-btn" href="/">กลับหน้าแรก</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

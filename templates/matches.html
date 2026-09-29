@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}ประวัติแมตช์{% endblock %}
+{% block content %}
+<div class="matches-wrap">
+    {% if not matches %}
+    <div class="matches-card">
+        <h1>ประวัติแมตช์ล่าสุด</h1>
+        <form method="post">
+            <label for="steam64_id">Steam ID</label>
+            <input id="steam64_id" name="steam64_id" value="{{ steam_id or '' }}" required>
+            <label for="limit">จำนวนแมตช์</label>
+            <input id="limit" name="limit" type="number" min="1" value="{{ limit or 5 }}">
+            <button type="submit">ค้นหา</button>
+        </form>
+        {% if error %}<p class="error">{{ error }}</p>{% endif %}
+        <p><a class="back-btn" href="/">กลับหน้าแรก</a></p>
+    </div>
+    {% else %}
+    <div class="matches-card">
+        <h1>{{ player_name or 'ผู้เล่น' }}</h1>
+        <p class="steam-id">Steam ID: {{ steam_id or 'N/A' }} · {{ matches|length }} แมตช์ล่าสุด</p>
+        <table class="match-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>แผนที่</th>
+                    <th>ผล</th>
+                    <th>สกอร์</th>
+                    <th>วันที่</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in matches %}
+                {% set scores = match.get('teamScores', []) %}
+                {% set won = match.get('won') %}
+                <tr class="{{ 'win-row' if won else 'lose-row' }}">
+                    <td>{{ loop.index }}</td>
+                    <td>{{ match.get('mapName', 'Unknown') }}</td>
+                    <td>
+                        <span class="badge {{ 'badge-win' if won else 'badge-lose' }}">
+                            {{ 'ชนะ' if won else 'แพ้' }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if scores|length >= 2 %}{{ scores[0] }}-{{ scores[1] }}{% else %}N/A{% endif %}
+                    </td>
+                    <td>{{ (match.get('startedAt') or 'N/A')[:16] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a class="back-btn" href="/">กลับหน้าแรก</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

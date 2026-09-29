@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}CS2 Stats Tracker{% endblock %}
+{% block content %}
+<div class="home">
+<div class="hero">
+    <h1>CS2 Stats Tracker</h1>
+    <p>ดูโปรไฟล์ ประวัติแมตช์ และเปรียบเทียบผู้เล่นจาก Leetify API</p>
+</div>
+
+<div class="home-grid">
+    <div class="action-card">
+        <h2>ดูโปรไฟล์</h2>
+        <p class="desc">ค้นหาจาก Steam64, vanity name หรือลิงก์โปรไฟล์ Steam</p>
+        <form method="post" action="/profile">
+            <label for="profile_steam64_id">Steam ID / ลิงก์โปรไฟล์</label>
+            <input id="profile_steam64_id" name="steam64_id" placeholder="76561197969209908 หรือลิงก์ Steam" required>
+            <button type="submit">ค้นหาโปรไฟล์</button>
+        </form>
+    </div>
+
+    <div class="action-card">
+        <h2>ดูประวัติแมตช์</h2>
+        <p class="desc">แสดงแมตช์ล่าสุด พร้อมผลสกอร์และแผนที่</p>
+        <form method="post" action="/matches">
+            <label for="matches_steam64_id">Steam ID</label>
+            <input id="matches_steam64_id" name="steam64_id" placeholder="76561197969209908 หรือลิงก์ Steam" required>
+            <label for="limit">จำนวนแมตช์</label>
+            <input id="limit" name="limit" type="number" min="1" value="5">
+            <button type="submit">ดูแมตช์</button>
+        </form>
+    </div>
+
+    <div class="action-card">
+        <h2>เปรียบเทียบ</h2>
+        <p class="desc">เทียบทักษะ Aim, Positioning, Utility และ Clutch</p>
+        <form method="post" action="/compare">
+            <label for="id1">Steam ID ผู้เล่นคนที่ 1</label>
+            <input id="id1" name="id1" placeholder="Steam ID / ลิงก์คนที่ 1" required>
+            <label for="id2">Steam ID ผู้เล่นคนที่ 2</label>
+            <input id="id2" name="id2" placeholder="Steam ID / ลิงก์คนที่ 2" required>
+            <button type="submit">เปรียบเทียบ</button>
+        </form>
+    </div>
+</div>
+</div>
+{% endblock %}

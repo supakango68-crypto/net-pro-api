@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}โปรไฟล์ผู้เล่น{% endblock %}
+{% block content %}
+{% set ratings = (player.get('ratings') if player else {}) or {} %}
+{% set rating_bars = (player.get('rating_bars') if player else {}) or {} %}
+{% set ranks = (player.get('ranks') if player else {}) or {} %}
+<div class="profile-wrap">
+    {% if not player %}
+    <div class="profile-card">
+        <h1>โปรไฟล์ผู้เล่น</h1>
+        <form method="post">
+            <label for="steam64_id">Steam ID (ตัวเลข 17 หลัก)</label>
+            <input id="steam64_id" name="steam64_id" value="{{ steam_id or '' }}" required>
+            <button type="submit">ค้นหา</button>
+        </form>
+        {% if error %}<p class="error">{{ error }}</p>{% endif %}
+        <p><a class="back-btn" href="/">กลับหน้าแรก</a></p>
+    </div>
+    {% else %}
+    <div class="profile-card">
+        <h1>{{ player.get('name', 'N/A') }}</h1>
+        <p class="steam-id">Steam ID: {{ steam_id or 'N/A' }}</p>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span>จำนวนแมตช์</span>
+                <strong>{{ player.get('totalMatches', 0) }}</strong>
+            </div>
+            <div class="stat-box">
+                <span>อัตราชนะ</span>
+                <strong>{{ '%.2f'|format(player.get('winRate', 0) or 0) }}%</strong>
+            </div>
+        </div>
+
+        <div class="rank-row">
+            <span class="rank-chip">Premier: {{ ranks.get('premier') or 'N/A' }}</span>
+            <span class="rank-chip">FACEIT: {{ ranks.get('faceit') or 'N/A' }}</span>
+        </div>
+    </div>
+
+    <div class="profile-card">
+        <h2>คะแนนทักษะ (0-100)</h2>
+        {% for label, key in [('Aim', 'aim'), ('Positioning', 'positioning'), ('Utility', 'utility'), ('Clutch', 'clutch')] %}
+        {% set score = ratings.get(key, 0) or 0 %}
+        <div class="skill-row">
+            <div class="skill-label">
+                <span>{{ label }}</span>
+                <span>{{ score }}</span>
+            </div>
+            <div class="bar">
+                <div class="bar-fill" style="width: {{ [score, 100]|min }}%;"></div>
+            </div>
+        </div>
+        {% endfor %}
+        <a class="back-btn" href="/">กลับหน้าแรก</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
